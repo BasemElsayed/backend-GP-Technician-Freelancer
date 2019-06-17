@@ -20,6 +20,7 @@ class CreateCommentsTable extends Migration
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
             $table->foreign('freelancer_id')->references('id')->on('freelancers')->onDelete('cascade');
             $table->longText('description');
+            $table->integer('typeOfUsers');
             $table->timestamps();
         });
     }

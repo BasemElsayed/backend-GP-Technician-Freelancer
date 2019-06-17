@@ -72,13 +72,13 @@ class UserController extends Controller
             $user->typeOfUsers = $request->get('typeOfUsers');
             $user->xCordinate = $request->get('xCordinate');
             $user->yCordinate = $request->get('yCordinate');
-            $user->save();
-            $client = DB::table('clients')->where('email', '=', $request->get('email'))->get();
-            $originalUser->id = $client[0]->id;
             $originalUser->password = bcrypt($request->get('password'));
             $originalUser->email = $request->get('email');
             $originalUser->typeOfUsers = $request->get('typeOfUsers');
             $originalUser->save();
+            $client = DB::table('users')->where('email', '=', $request->get('email'))->get();
+            $user->id = $client[0]->id;
+            $user->save();
             
             $success['token'] =  $user->createToken('MyApp')-> accessToken; 
             return response()->json(['success'=>$success], $this-> successStatus); 
@@ -88,7 +88,7 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [ 
                 'name' => 'required',
                 'address' => 'required', 
-                'email' => 'required|email|unique:clients|unique:freelancers', 
+                'email' => 'required|email|unique:users', 
                 'password' => 'required', 
                 'c_password' => 'required|same:password',
                 'mobileNumber' => 'required|min:11', 
@@ -110,27 +110,18 @@ class UserController extends Controller
             $user->jobTitle = $request->get('jobTitle');
             $user->xCordinate = $request->get('xCordinate');
             $user->yCordinate = $request->get('yCordinate');
-            $user->save();
-            $freelancer = DB::table('freelancers')->where('email', '=', $request->get('email'))->get();
-            $originalUser->id = $freelancer[0]->id;
             $originalUser->password = bcrypt($request->get('password'));
             $originalUser->email = $request->get('email');
             $originalUser->typeOfUsers = $request->get('typeOfUsers');
             $originalUser->save();
+            $freelancer = DB::table('users')->where('email', '=', $request->get('email'))->get();
+            $user->id = $freelancer[0]->id;
+            $user->save();
+           
 
             $success['token'] =  $user->createToken('MyApp')-> accessToken; 
             return response()->json(['success'=>$success], $this-> successStatus); 
         }
-        
-        /*if($request->hasFile('personalImage'))
-        {
-            $image = $request->file('personalImage');
-            $name = str_slug($request->email) . '.' . $image->getClientOriginalExtension();
-            $destinationPath = public_path('/usersImages');
-            $imagePath = $destinationPath . '/' . $name;
-            $image->move($destinationPath, $name);
-            $user->personalImage = $name;
-        }*/
         
     }
 
@@ -184,10 +175,10 @@ class UserController extends Controller
             $freelancer = Freelancer::findOrFail($id);           
             $validator = Validator::make($request->all(), [ 
                 'name' => 'required',
+                'email' => 'required',
                 'password' => 'required', 
                 'c_password' => 'same:password',
                 'mobileNumber' => 'min:11',
-                'jobTitle' => 'required',
             ]);
 
             if ($validator->fails()) 
@@ -209,6 +200,9 @@ class UserController extends Controller
                 $input['password'] = bcrypt($input['password']); 
             
             $freelancer->update($input);
+            $input2 = ['email' => $input['email'], 'password' => $input['password']];
+            $user->update($input2);
+
             return response()->json($user, $this-> successStatus); 
         }
     }

@@ -27,6 +27,7 @@ class CommentController extends Controller
         $comment->client_id = $request->get('client_id');
         $comment->freelancer_id = $request->get('freelancer_id');
         $comment->description = $request->get('description');
+        $comment->typeOfUsers = $request->get('typeOfUsers');
         $comment->save();
         
         $success['comment'] =  $comment; 
@@ -48,7 +49,25 @@ class CommentController extends Controller
         $comments = DB::table('comments')
             ->join('clients', 'clients.id', '=', 'comments.client_id')
             ->join('freelancers', 'freelancers.id', '=', 'comments.freelancer_id')
-            ->where('clients.email', $email)
+            ->where([
+                ['clients.email', '=', $email],
+                ['comments.typeOfUsers', '=', '1'],
+            ])
+            ->select('comments.description', 'clients.name', 'freelancers.name', 'freelancers.email')
+            ->get();
+        $success['comments'] =  $comments; 
+        return response()->json($success, $this-> successStatus);
+    }
+
+    public function showAllFreelancerComments($email)
+    {
+        $comments = DB::table('comments')
+            ->join('clients', 'clients.id', '=', 'comments.client_id')
+            ->join('freelancers', 'freelancers.id', '=', 'comments.freelancer_id')
+            ->where([
+                ['freelancers.email', '=', $email],
+                ['comments.typeOfUsers', '=', '2'],
+            ])
             ->select('comments.description', 'clients.name', 'freelancers.name', 'freelancers.email')
             ->get();
         $success['comments'] =  $comments; 

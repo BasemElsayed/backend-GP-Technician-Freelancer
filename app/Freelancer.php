@@ -10,8 +10,11 @@ class Freelancer extends User
 {
     //
     protected $fillable = [
-        'jobTitle', 'allowedByAdmin', 'limitNumberOfWorks', 
+        'name', 'email', 'password', 'mobileNumber', 'typeOfUsers', 'personalImage', 'address', 'numberOfJobsDone', 'numberOfCurrentRequests', 'xCordinate', 'yCordinate', 'jobTitle', 'allowedByAdmin', 'limitNumberOfWorks', 
     ];
+
+    
+
     protected $hidden = [
         'password', 'remember_token',
     ];

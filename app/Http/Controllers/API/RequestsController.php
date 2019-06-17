@@ -157,4 +157,64 @@ class RequestsController extends Controller
     }
 
 
+
+    public function updateStatus(Request $request, $id)
+    {
+        $reqst = Requst::findOrFail($id);  
+        $input = $request->all();
+        $reqst->update($input);
+        return response()->json($reqst, $this-> successStatus); 
+    }
+
+
+
+
+    public function showWaitingRequestsFreelancer($id)
+    {        
+        $requsts = DB::table('requsts')
+            ->join('clients', 'clients.id', '=', 'requsts.client_id')
+            ->where([
+                ['freelancer_id', '=', $id],
+                ['status', '=', '3'],
+            ])
+            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address')
+            ->get();
+
+        $success['requsts'] =  $requsts;
+        return response()->json($success, $this-> successStatus);
+    }
+
+    public function showAcceptingRequestsFreelancer($id)
+    {        
+        $requsts = DB::table('requsts')
+            ->join('clients', 'clients.id', '=', 'requsts.client_id')
+            ->where([
+                ['freelancer_id', '=', $id],
+                ['status', '=', '1'],
+            ])
+            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address')
+            ->get();
+
+        $success['requsts'] =  $requsts;
+        return response()->json($success, $this-> successStatus);
+    }
+
+    public function showFinishedRequestsFreelancer($id)
+    {        
+        $requsts = DB::table('requsts')
+            ->join('clients', 'clients.id', '=', 'requsts.client_id')
+            ->where([
+                ['freelancer_id', '=', $id],
+                ['status', '=', '2'],
+            ])
+            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address')
+            ->get();
+
+        $success['requsts'] =  $requsts;
+        return response()->json($success, $this-> successStatus);
+    }
+
+    
+
+
 }

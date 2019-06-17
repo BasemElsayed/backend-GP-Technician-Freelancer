@@ -45,8 +45,15 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('getFreelancersByGategory/{category}', 'API\ClientController@showWorkersByGategory');
     Route::get('getFreelancersByGPS/{latitude}/{longitutde}/{category}', 'API\ClientController@showWorkersByGPS');
 
+    // Freelancer Controller
+    Route::get('getFreelancer/{email}', 'API\FreelancerController@getFreelancerByEmail');
+    
+    
+    
+
     // Comment Controller
     Route::get('getComments/{email}', 'API\CommentController@showAllClientComments');
+    Route::get('getFrelancersComments/{email}', 'API\CommentController@showAllFreelancerComments');
     Route::post('addComment', 'API\CommentController@review');
     
     // Request Controller
@@ -55,8 +62,12 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('getUnfinishedRequests/{id}', 'API\RequestsController@showUnfinishedRequests');
     Route::get('getCancelledRequests/{id}', 'API\RequestsController@showCancelledRequests');
     Route::get('getWaitingRequests/{id}', 'API\RequestsController@showWaitingRequests');
+    Route::get('getWaitingRequestsFreelancer/{id}', 'API\RequestsController@showWaitingRequestsFreelancer');
+    Route::get('showAcceptingRequestsFreelancer/{id}', 'API\RequestsController@showAcceptingRequestsFreelancer');
+    Route::get('showFinishedRequestsFreelancer/{id}', 'API\RequestsController@showFinishedRequestsFreelancer');
     Route::get('updateRate/{id}/{rate}', 'API\RequestsController@updateRate');
     Route::get('cancelRequest/{id}', 'API\RequestsController@cancelRequest');
+    Route::post('updateRequest/{id}', 'API\RequestsController@updateStatus');
     
     
 });
