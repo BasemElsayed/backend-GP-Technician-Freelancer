@@ -37,7 +37,9 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     // User Controller
     Route::get('details', 'API\UserController@viewCurrentUser');
-
+    Route::post('edit/{id}', 'API\UserController@edit');
+    Route::post('uploadPhoto/{id}', 'API\UserController@uploadPhoto');
+    
     // Client Controller
     Route::get('getClient/{email}', 'API\ClientController@getClientByEmail');
     Route::get('getFreelancersByGategory/{category}', 'API\ClientController@showWorkersByGategory');

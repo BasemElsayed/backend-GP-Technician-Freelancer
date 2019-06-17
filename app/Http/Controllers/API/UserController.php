@@ -72,11 +72,14 @@ class UserController extends Controller
             $user->typeOfUsers = $request->get('typeOfUsers');
             $user->xCordinate = $request->get('xCordinate');
             $user->yCordinate = $request->get('yCordinate');
+            $user->save();
+            $client = DB::table('clients')->where('email', '=', $request->get('email'))->get();
+            $originalUser->id = $client[0]->id;
             $originalUser->password = bcrypt($request->get('password'));
             $originalUser->email = $request->get('email');
             $originalUser->typeOfUsers = $request->get('typeOfUsers');
             $originalUser->save();
-            $user->save();
+            
             $success['token'] =  $user->createToken('MyApp')-> accessToken; 
             return response()->json(['success'=>$success], $this-> successStatus); 
         }
@@ -107,11 +110,13 @@ class UserController extends Controller
             $user->jobTitle = $request->get('jobTitle');
             $user->xCordinate = $request->get('xCordinate');
             $user->yCordinate = $request->get('yCordinate');
+            $user->save();
+            $freelancer = DB::table('freelancers')->where('email', '=', $request->get('email'))->get();
+            $originalUser->id = $freelancer[0]->id;
             $originalUser->password = bcrypt($request->get('password'));
             $originalUser->email = $request->get('email');
             $originalUser->typeOfUsers = $request->get('typeOfUsers');
             $originalUser->save();
-            $user->save();
 
             $success['token'] =  $user->createToken('MyApp')-> accessToken; 
             return response()->json(['success'=>$success], $this-> successStatus); 
@@ -129,6 +134,123 @@ class UserController extends Controller
         
     }
 
+
+
+
+
+    public function edit(Request $request, $id)
+    {       
+        $chk = $request->get('typeOfUsers');
+        if($chk == 1)
+        {  
+            $user = User::findOrFail($id);
+            $client = Client::findOrFail($id);          
+            $validator = Validator::make($request->all(), [ 
+                'name' => 'required',
+                'email' => 'required',
+                'password' => 'required', 
+                'c_password' => 'required|same:password',
+                'mobileNumber' => 'min:11',
+            ]);
+
+            if ($validator->fails()) 
+            { 
+                return response()->json($validator->errors(), 401);            
+            }
+
+            $users = User::where('email', $request->input('email') )->get();
+            foreach($users as $currentUser)
+            {
+                if($currentUser->id != $id)
+                {
+                    return response()->json(['email'=> ['This email has been already token.']], 401);
+                }
+            }
+            
+            $input = $request->all();
+            if(isset($input['password']))
+                $input['password'] = bcrypt($input['password']); 
+            
+            $client->update($input);
+            $input2 = ['email' => $input['email'], 'password' => $input['password']];
+            $user->update($input2);
+
+            return response()->json($user, $this-> successStatus); 
+        }
+
+        if($chk == 2)
+        { 
+            $user = User::findOrFail($id);
+            $freelancer = Freelancer::findOrFail($id);           
+            $validator = Validator::make($request->all(), [ 
+                'name' => 'required',
+                'password' => 'required', 
+                'c_password' => 'same:password',
+                'mobileNumber' => 'min:11',
+                'jobTitle' => 'required',
+            ]);
+
+            if ($validator->fails()) 
+            { 
+                return response()->json($validator->errors(), 401);            
+            }
+
+            $users = User::where('email', $request->input('email') )->get();
+            foreach($users as $currentUser)
+            {
+                if($currentUser->id != $id)
+                {
+                    return response()->json(['email'=> ['This email has been already token.']], 401);
+                }
+            }
+            
+            $input = $request->all();
+            if(isset($input['password']))
+                $input['password'] = bcrypt($input['password']); 
+            
+            $freelancer->update($input);
+            return response()->json($user, $this-> successStatus); 
+        }
+    }
+
+
+    public function uploadPhoto(Request $request, $id)
+    {
+        $chk = $request->get('typeOfUsers');
+        if($chk == 1)
+        {  
+            $client = Client::findOrFail($id);   
+            if($request->hasFile('personalImage'))
+            {
+                $image = $request->file('personalImage');
+                $name = str_slug($client->email) . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('/clientImages');
+                $imagePath = $destinationPath . '/' . $name;
+                $image->move($destinationPath, $name);
+                $input['personalImage'] = $name;
+            }
+            $client->update($input);
+            return response()->json($client, $this-> successStatus); 
+        }
+        if($chk == 2)
+        {  
+            $freelancer = Freelancer::findOrFail($id);   
+            if($request->hasFile('personalImage'))
+            {
+                $image = $request->file('personalImage');
+                $name = str_slug($freelancer->email) . '.' . $image->getClientOriginalExtension();
+                $destinationPath = public_path('/freelancerImages');
+                $imagePath = $destinationPath . '/' . $name;
+                $image->move($destinationPath, $name);
+                $input['personalImage'] = $name;
+            }
+            $freelancer->update($input);
+            return response()->json($freelancer, $this-> successStatus); 
+        }
+    }
+
+
+
     /** 
      * details api 
      * 
@@ -141,16 +263,6 @@ class UserController extends Controller
         return response()->json(['success' => $user], $this-> successStatus); 
     }
 
-    public function edit()
-    {
-
-    } 
-
-
-    public function addressByGPS()
-    {
-        
-    }
 
     public function logout()
     {
