@@ -30,6 +30,8 @@ class CreateFreelancersTable extends Migration
             $table->integer('limitNumberOfWorks')->default(30);
             $table->string('jobTitle');
             $table->boolean('allowedByAdmin')->default(0);
+            $table->boolean('allowedToRequest')->default(1);
+            $table->double('totalRate')->default(5);
             $table->rememberToken();
             $table->timestamps();
         });

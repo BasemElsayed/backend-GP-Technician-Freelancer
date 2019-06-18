@@ -37,9 +37,10 @@ Route::group(['middleware' => 'auth:api'], function(){
 
     // User Controller
     Route::get('details', 'API\UserController@viewCurrentUser');
+    Route::get('logoutAPI', 'API\UserController@logoutAPI');
     Route::post('edit/{id}', 'API\UserController@edit');
     Route::post('uploadPhoto/{id}', 'API\UserController@uploadPhoto');
-    
+        
     // Client Controller
     Route::get('getClient/{email}', 'API\ClientController@getClientByEmail');
     Route::get('getFreelancersByGategory/{category}', 'API\ClientController@showWorkersByGategory');
@@ -65,7 +66,9 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('getWaitingRequestsFreelancer/{id}', 'API\RequestsController@showWaitingRequestsFreelancer');
     Route::get('showAcceptingRequestsFreelancer/{id}', 'API\RequestsController@showAcceptingRequestsFreelancer');
     Route::get('showFinishedRequestsFreelancer/{id}', 'API\RequestsController@showFinishedRequestsFreelancer');
+    Route::get('showFinishedRequestsNeedsRate/{id}', 'API\RequestsController@showFinishedRequestsNeedsRate');
     Route::get('updateRate/{id}/{rate}', 'API\RequestsController@updateRate');
+    Route::get('updateRateFreelancer/{id}/{rate}', 'API\RequestsController@updateRateFreelancer');
     Route::get('cancelRequest/{id}', 'API\RequestsController@cancelRequest');
     Route::post('updateRequest/{id}', 'API\RequestsController@updateStatus');
     

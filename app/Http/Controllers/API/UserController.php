@@ -25,6 +25,7 @@ class UserController extends Controller
             $success['token'] =  $user->createToken('MyApp')-> accessToken;
             $success['typeOfUsers'] =  $user->typeOfUsers; 
             $success['id'] =  $user->id; 
+            $success['email'] =  $user->email;
             return response()->json(['success' => $success], $this-> successStatus); 
         } 
 
@@ -258,9 +259,11 @@ class UserController extends Controller
     }
 
 
-    public function logout()
+    public function logoutAPI()
     {
-        
+        $user = Auth::user()->token();
+        $user->revoke();
+        return response()->json(['success' => "logout successfully"], $this-> successStatus); 
     }
 
 

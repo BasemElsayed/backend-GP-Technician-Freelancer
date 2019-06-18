@@ -23,6 +23,7 @@ class RequestsController extends Controller
         $requsts = DB::table('requsts')->where([
             ['client_id', '=', $request->get('client_id')],
             ['freelancer_id', '=', $request->get('freelancer_id')],
+            ['status', '=', 3],
         ])->first();
         
         if ($validator->fails()) 
@@ -72,7 +73,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '2'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -89,7 +90,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '1'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -107,7 +108,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '0'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -123,7 +124,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '3'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -153,6 +154,63 @@ class RequestsController extends Controller
         {
             DB::table('clients')->where('id', $requsts[0]->client_id)->update(['allowedToRequest' => 1]);
         }
+
+        $freelancerRates = DB::table('requsts')->where([
+            ['freelancer_id', '=', $requsts[0]->freelancer_id],
+            ['status', '=', '2'],
+            ['freelancerRate', '<>', '0'],
+        ])->get();
+        $count = 0;
+        foreach($freelancerRates as $element)
+        {
+            $count = $count + 1;
+        }
+
+        $freelanc = DB::table('freelancers')->where('id', $requsts[0]->freelancer_id)->get();
+        $newRate = ($rate + (($count-1)*$freelanc[0]->totalRate)) / $count;
+        DB::table('freelancers')->where('id', $requsts[0]->freelancer_id)->update(['totalRate' => $newRate]);
+        return $requsts;
+    }
+
+
+    public function updateRateFreelancer($id, $rate)
+    {
+        DB::table('requsts')->where('id', $id)->update(['freelancerRate' => $rate]);
+        $requsts = DB::table('requsts')->where('id', $id)->get();
+
+        $freelancerRequsts = DB::table('requsts')->where([
+            ['freelancer_id', '=', $requsts[0]->freelancer_id],
+            ['status', '=', '2'],
+        ])->get();
+
+        $chkAll = true;
+        foreach($freelancerRequsts as $element)
+        {
+            if($element->freelancerRate == 0)
+            {
+                $chkAll = false;
+            }
+        }
+        if($chkAll === true)
+        {
+            DB::table('freelancers')->where('id', $requsts[0]->freelancer_id)->update(['allowedToRequest' => 1]);
+        }
+
+        $clientRates = DB::table('requsts')->where([
+            ['client_id', '=', $requsts[0]->client_id],
+            ['status', '=', '2'],
+            ['freelancerRate', '<>', '0'],
+        ])->get();
+        $count = 0;
+        foreach($clientRates as $element)
+        {
+            $count = $count + 1;
+        }
+
+        $client = DB::table('clients')->where('id', $requsts[0]->client_id)->get();
+        $newRate = ($rate + (($count-1)*$client[0]->totalRate)) / $count;
+        DB::table('clients')->where('id', $requsts[0]->client_id)->update(['totalRate' => $newRate]);
+
         return $requsts;
     }
 
@@ -163,6 +221,26 @@ class RequestsController extends Controller
         $reqst = Requst::findOrFail($id);  
         $input = $request->all();
         $reqst->update($input);
+        if($request->get('status') == 1)
+        {
+            $freelancer = DB::table('freelancers')->where('id', $reqst->freelancer_id)->get();
+            $limitNumberOfWorks = $freelancer[0]->limitNumberOfWorks - 1;
+            DB::table('freelancers')->where('id', $freelancer[0]->id)->update(['limitNumberOfWorks' => $limitNumberOfWorks]);
+        }
+        if($request->get('status') == 2)
+        {
+            $freelancer = DB::table('freelancers')->where('id', $reqst->freelancer_id)->get();
+            $numberofjob = $freelancer[0]->numberOfJobsDone;
+            $numberofjob = $numberofjob + 1;
+            DB::table('freelancers')->where('id', $freelancer[0]->id)->update(['allowedToRequest' => 0]);
+            DB::table('freelancers')->where('id', $freelancer[0]->id)->update(['numberOfJobsDone' => $numberofjob]);
+
+            $client = DB::table('clients')->where('id', $reqst->client_id)->get();
+            $numberofjobd = $client[0]->numberOfJobsDone;
+            $numberofjobd = $numberofjobd + 1;
+            DB::table('clients')->where('id', $client[0]->id)->update(['numberOfJobsDone' => $numberofjobd]);
+        }
+
         return response()->json($reqst, $this-> successStatus); 
     }
 
@@ -177,7 +255,7 @@ class RequestsController extends Controller
                 ['freelancer_id', '=', $id],
                 ['status', '=', '3'],
             ])
-            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address')
+            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address', 'requsts.freelancerRate', 'clients.totalRate')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -192,7 +270,7 @@ class RequestsController extends Controller
                 ['freelancer_id', '=', $id],
                 ['status', '=', '1'],
             ])
-            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address')
+            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address', 'requsts.freelancerRate', 'clients.totalRate')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -207,14 +285,29 @@ class RequestsController extends Controller
                 ['freelancer_id', '=', $id],
                 ['status', '=', '2'],
             ])
-            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address')
+            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address', 'requsts.freelancerRate', 'clients.totalRate')
             ->get();
 
         $success['requsts'] =  $requsts;
         return response()->json($success, $this-> successStatus);
     }
 
-    
+    public function showFinishedRequestsNeedsRate($id)
+    {        
+        $requsts = DB::table('requsts')
+            ->join('clients', 'clients.id', '=', 'requsts.client_id')
+            ->where([
+                ['freelancer_id', '=', $id],
+                ['status', '=', '2'],
+                ['freelancerRate', '=', '0'],
+            ])
+            ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address', 'requsts.freelancerRate', 'clients.totalRate')
+            ->get();
+            
+        $success['requsts'] =  $requsts;
+        return response()->json($success, $this-> successStatus);
+    }
 
+    
 
 }

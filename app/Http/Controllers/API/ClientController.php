@@ -17,7 +17,7 @@ class ClientController extends Controller
         $freelancers = DB::table('freelancers')->where([
             ['jobTitle', '=', $category],
             ['allowedByAdmin', '=', '1'],
-        ])->select('name', 'email', 'mobileNumber', 'personalImage', 'numberOfJobsDone', 'jobTitle', 'id')->get();
+        ])->select('name', 'email', 'mobileNumber', 'personalImage', 'numberOfJobsDone', 'jobTitle', 'id', 'address', 'totalRate')->get();
 
         $success['freelancers'] =  $freelancers; 
         return response()->json($success, $this-> successStatus);
@@ -31,7 +31,7 @@ class ClientController extends Controller
         $freelancers = DB::table('freelancers')->where([
             ['jobTitle', '=', $category],
             ['allowedByAdmin', '=', '1'],
-        ])->select('name', 'email', 'mobileNumber', 'personalImage', 'numberOfJobsDone', 'jobTitle', 'id')
+        ])->select('name', 'email', 'mobileNumber', 'personalImage', 'numberOfJobsDone', 'jobTitle', 'id', 'address', 'totalRate')
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", [$radius])->get();
 

@@ -28,6 +28,7 @@ class CreateClientsTable extends Migration
             $table->integer('numberOfCurrentRequests')->default(0);
             $table->integer('typeOfUsers');
             $table->boolean('allowedToRequest')->default(1);
+            $table->double('totalRate')->default(5);
             $table->rememberToken();
             $table->timestamps();
         });
