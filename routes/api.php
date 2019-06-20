@@ -25,13 +25,10 @@ Route::post('freeLancerLogin', 'API\FreelancerController@login');
 Route::post('freelancerRegister', 'API\FreelancerController@register');
 
 // Service Controller URLs
-Route::post('addService', 'API\ServiceController@addService');
 Route::get('getServices', 'API\ServiceController@viewAllService');
 
-
-
-Route::post('addRegion', 'API\RegionsController@addRegion');
 Route::get('getRegions', 'API\RegionsController@viewAllRegions');
+
 
 Route::group(['middleware' => 'auth:api'], function(){
 
@@ -78,7 +75,33 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('updateRateFreelancer/{id}/{rate}', 'API\RequestsController@updateRateFreelancer');
     Route::get('cancelRequest/{id}', 'API\RequestsController@cancelRequest');
     Route::post('updateRequest/{id}', 'API\RequestsController@updateStatus');
+
+    // Service Controller
+    Route::get('getServiceByID/{id}', 'API\ServiceController@viewService');
+    Route::post('editService/{id}', 'API\ServiceController@editService');
+    Route::post('updateServiceIcon/{id}', 'API\ServiceController@updateServiceIcon');
+    Route::post('addService', 'API\ServiceController@addService');
+    Route::get('deleteService/{id}', 'API\ServiceController@deleteService');
+    
+
+    // Region Controller
+    Route::post('addRegion', 'API\RegionsController@addRegion');
+    Route::get('deleteRegion/{id}', 'API\RegionsController@deleteRegion');
     
     
+    // Admin Controller
+    Route::get('viewFreelancers', 'API\AdminController@showAllFreelancersUsers');
+    Route::get('viewStatistics', 'API\AdminController@viewStatistics');
+    Route::get('blockFreelancer/{id}', 'API\AdminController@blockAccount');
+    Route::get('approveFreelancer/{id}', 'API\AdminController@approveAccount');
+    
+
+     
+
+
 });
+
+
+
+
 

@@ -34,5 +34,10 @@ class RegionsController extends Controller
         $success['regions'] =  $regions; 
         return response()->json($success, $this-> successStatus);
     }
+    
+    public function deleteRegion($id)
+    {
+        DB::table('regions')->where('id', '=', $id)->delete();
+    }
 
 }

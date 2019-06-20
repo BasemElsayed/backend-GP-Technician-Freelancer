@@ -222,7 +222,7 @@ class UserController extends Controller
                 $destinationPath = public_path('/clientImages');
                 $imagePath = $destinationPath . '/' . $name;
                 $image = Image::make($image->getRealPath());
-                $image->resize(100, 100, function ($constraint) {
+                $image->resize(600, 600, function ($constraint) {
                     $constraint->aspectRatio();
                 })->save($imagePath);
                 $input['personalImage'] = $name;
