@@ -33,7 +33,10 @@ class ServiceController extends Controller
             $name = str_slug($request->name) . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/serviceIcons');
             $imagePath = $destinationPath . '/' . $name;
-            $image->move($destinationPath, $name);
+            $image = Image::make($image->getRealPath());
+            $image->resize(223, 203, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($imagePath);
             $service->serviceIcon = $name;
         }
         $service->name = $request->get('name');

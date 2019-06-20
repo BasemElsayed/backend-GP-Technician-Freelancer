@@ -43,17 +43,24 @@ Route::group(['middleware' => 'auth:api'], function(){
         
     // Client Controller
     Route::get('getClient/{email}', 'API\ClientController@getClientByEmail');
+    Route::get('getClientByID/{id}', 'API\ClientController@getClientByID');
     Route::get('getFreelancersByGategory/{category}', 'API\ClientController@showWorkersByGategory');
     Route::get('getFreelancersByGPS/{latitude}/{longitutde}/{category}', 'API\ClientController@showWorkersByGPS');
-
+    
     // Freelancer Controller
     Route::get('getFreelancer/{email}', 'API\FreelancerController@getFreelancerByEmail');
+    Route::get('getFreelancerByID/{id}', 'API\FreelancerController@getFreelancerByID');
     
     
+    // Portfolio Controller
+    Route::post('updatePortfolio', 'API\PortfolioController@updatePortfolio');
+    Route::get('viewAllPortfolio/{freelancer_id}', 'API\PortfolioController@viewAllPortfolio');
+    Route::get('deletePortfolio/{id}', 'API\PortfolioController@delete');
     
-
+    
     // Comment Controller
     Route::get('getComments/{email}', 'API\CommentController@showAllClientComments');
+    Route::get('getClientCommentsByID/{id}', 'API\CommentController@getClientCommentsByID');
     Route::get('getFrelancersComments/{email}', 'API\CommentController@showAllFreelancerComments');
     Route::post('addComment', 'API\CommentController@review');
     

@@ -221,7 +221,10 @@ class UserController extends Controller
                 $name = str_slug($client->email) . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('/clientImages');
                 $imagePath = $destinationPath . '/' . $name;
-                $image->move($destinationPath, $name);
+                $image = Image::make($image->getRealPath());
+                $image->resize(100, 100, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($imagePath);
                 $input['personalImage'] = $name;
             }
             $client->update($input);
@@ -236,7 +239,10 @@ class UserController extends Controller
                 $name = str_slug($freelancer->email) . '.' . $image->getClientOriginalExtension();
                 $destinationPath = public_path('/freelancerImages');
                 $imagePath = $destinationPath . '/' . $name;
-                $image->move($destinationPath, $name);
+                $image = Image::make($image->getRealPath());
+                $image->resize(600, 600, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($imagePath);
                 $input['personalImage'] = $name;
             }
             $freelancer->update($input);

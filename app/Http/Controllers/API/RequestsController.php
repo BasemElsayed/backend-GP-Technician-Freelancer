@@ -182,7 +182,11 @@ class RequestsController extends Controller
             ['freelancer_id', '=', $requsts[0]->freelancer_id],
             ['status', '=', '2'],
         ])->get();
-
+        
+        $freelancer = DB::table('freelancers')->where('id', $requsts[0]->freelancer_id)->get();
+        $limitNumberOfWorks = $freelancer[0]->limitNumberOfWorks + 1;
+        DB::table('freelancers')->where('id', $freelancer[0]->id)->update(['limitNumberOfWorks' => $limitNumberOfWorks]);
+        
         $chkAll = true;
         foreach($freelancerRequsts as $element)
         {

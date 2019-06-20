@@ -17,6 +17,7 @@ class ClientController extends Controller
         $freelancers = DB::table('freelancers')->where([
             ['jobTitle', '=', $category],
             ['allowedByAdmin', '=', '1'],
+            ['limitNumberOfWorks', '>', '0'],
         ])->select('name', 'email', 'mobileNumber', 'personalImage', 'numberOfJobsDone', 'jobTitle', 'id', 'address', 'totalRate')->get();
 
         $success['freelancers'] =  $freelancers; 
@@ -31,6 +32,7 @@ class ClientController extends Controller
         $freelancers = DB::table('freelancers')->where([
             ['jobTitle', '=', $category],
             ['allowedByAdmin', '=', '1'],
+            ['limitNumberOfWorks', '>', '0'],
         ])->select('name', 'email', 'mobileNumber', 'personalImage', 'numberOfJobsDone', 'jobTitle', 'id', 'address', 'totalRate')
             ->selectRaw("{$haversine} AS distance")
             ->whereRaw("{$haversine} < ?", [$radius])->get();
@@ -40,11 +42,6 @@ class ClientController extends Controller
         return response()->json($success, $this-> successStatus);
     }
     
-    public function selectWorker()
-    {
-
-    }
-
     public function getClientByEmail($email)
     {
         $user = DB::table('clients')->where('email', $email)->first();
@@ -58,5 +55,23 @@ class ClientController extends Controller
             return response()->json(['email'=> ['wrong mail']], 401); 
         }
     }
+
+    
+    public function getClientByID($id)
+    {
+        $user = DB::table('clients')->where('id', $id)->first();
+        if($user)
+        {        
+            $success['client'] =  $user;
+            return response()->json($success, $this-> successStatus);
+        }
+        else
+        {
+            return response()->json(['email'=> ['wrong mail']], 401); 
+        }
+    }
+
+
+    
 
 }

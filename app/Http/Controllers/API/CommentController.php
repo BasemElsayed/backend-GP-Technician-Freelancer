@@ -34,16 +34,6 @@ class CommentController extends Controller
         return response()->json(['success'=>$success], $this-> successStatus); 
     }
 
-    public function editComment()
-    {
-
-    }
-
-    public function deleteComment()
-    {
-        
-    }
-
     public function showAllClientComments($email)
     {
         $comments = DB::table('comments')
@@ -59,6 +49,23 @@ class CommentController extends Controller
         return response()->json($success, $this-> successStatus);
     }
 
+    public function getClientCommentsByID($id)
+    {
+        $comments = DB::table('comments')
+            ->join('clients', 'clients.id', '=', 'comments.client_id')
+            ->join('freelancers', 'freelancers.id', '=', 'comments.freelancer_id')
+            ->where([
+                ['clients.id', '=', $id],
+                ['comments.typeOfUsers', '=', '1'],
+            ])
+            ->select('comments.description', 'clients.name', 'freelancers.name', 'freelancers.email')
+            ->get();
+        $success['comments'] =  $comments; 
+        return response()->json($success, $this-> successStatus);
+    }
+
+
+    
     public function showAllFreelancerComments($email)
     {
         $comments = DB::table('comments')
