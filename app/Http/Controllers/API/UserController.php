@@ -61,7 +61,7 @@ class UserController extends Controller
     
             if ($validator->fails()) 
             { 
-                return response()->json(['error'=>$validator->errors()], 401);            
+                return response()->json(['error'=>$validator->errors()], 400);            
             }
             $originalUser = new User();
             $user = new Client();
@@ -98,7 +98,7 @@ class UserController extends Controller
     
             if ($validator->fails()) 
             { 
-                return response()->json(['error'=>$validator->errors()], 401);            
+                return response()->json(['error'=>$validator->errors()], 400);            
             }
             $user = new Freelancer();
             $originalUser = new User();
@@ -147,7 +147,7 @@ class UserController extends Controller
 
             if ($validator->fails()) 
             { 
-                return response()->json($validator->errors(), 401);            
+                return response()->json($validator->errors(), 400);            
             }
 
             $users = User::where('email', $request->input('email') )->get();
@@ -155,7 +155,7 @@ class UserController extends Controller
             {
                 if($currentUser->id != $id)
                 {
-                    return response()->json(['email'=> ['This email has been already token.']], 401);
+                    return response()->json(['email'=> ['This email has been already token.']], 400);
                 }
             }
             
@@ -192,7 +192,7 @@ class UserController extends Controller
             {
                 if($currentUser->id != $id)
                 {
-                    return response()->json(['email'=> ['This email has been already token.']], 401);
+                    return response()->json(['email'=> ['This email has been already token.']], 400);
                 }
             }
             

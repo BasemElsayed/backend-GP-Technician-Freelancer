@@ -21,12 +21,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login', 'API\UserController@login');
 Route::post('register', 'API\UserController@register');
 
-Route::post('freeLancerLogin', 'API\FreelancerController@login');
-Route::post('freelancerRegister', 'API\FreelancerController@register');
 
-// Service Controller URLs
 Route::get('getServices', 'API\ServiceController@viewAllService');
-
 Route::get('getRegions', 'API\RegionsController@viewAllRegions');
 
 

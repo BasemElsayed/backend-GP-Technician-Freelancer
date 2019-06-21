@@ -28,6 +28,7 @@ class RegionsController extends Controller
         $success['region'] =  $region; 
         return response()->json(['success'=>$success], $this-> successStatus); 
     }
+    
     public function viewAllRegions(Region $region)
     {
         $regions = DB::table('regions')->get();
