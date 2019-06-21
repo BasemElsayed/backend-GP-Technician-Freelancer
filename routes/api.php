@@ -67,6 +67,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::get('showAcceptingRequestsFreelancer/{id}', 'API\RequestsController@showAcceptingRequestsFreelancer');
     Route::get('showFinishedRequestsFreelancer/{id}', 'API\RequestsController@showFinishedRequestsFreelancer');
     Route::get('showFinishedRequestsNeedsRate/{id}', 'API\RequestsController@showFinishedRequestsNeedsRate');
+    Route::get('showFinishedRequestsNeedsRateClientVersion/{id}', 'API\RequestsController@showFinishedRequestsNeedsRateClientVersion');
     Route::get('updateRate/{id}/{rate}', 'API\RequestsController@updateRate');
     Route::get('updateRateFreelancer/{id}/{rate}', 'API\RequestsController@updateRateFreelancer');
     Route::get('cancelRequest/{id}', 'API\RequestsController@cancelRequest');

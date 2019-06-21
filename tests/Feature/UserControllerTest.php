@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -33,7 +34,7 @@ class UserControllerTest extends TestCase
         $this->assertEquals(401, $response->status());
     }
 
-    public function testRegisterValidData()
+   /*public function testRegisterValidData()
     {
         $response = $this->post('http://127.0.0.1:8000/api/register', [
         'name' => 'besem',
@@ -45,7 +46,7 @@ class UserControllerTest extends TestCase
         'typeOfUsers' => '1'
         ]); 
         $this->assertEquals(200, $response->status());
-    }
+    }*/
 
     public function testRegisterInjection()
     {
@@ -76,16 +77,68 @@ class UserControllerTest extends TestCase
     }
 
 
+    public function testDetailAPIViewCurrentUser()
+    {
+        $response = $this->json('post', 'http://127.0.0.1:8000/api/login', ['email' => 'ebasem653@gmail.com', 'password' => '123456']);
+        $token = $response->original['success']['token'];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token
+          ])->json('get', 'http://127.0.0.1:8000/api/details');
+        $this->assertEquals(200, $response->status());
+    }
+
+
     
-        /*
-Route::get('details', 'API\UserController@viewCurrentUser');
-    Route::get('logoutAPI', 'API\UserController@logoutAPI');
-    Route::post('edit/{id}', 'API\UserController@edit');
-    Route::post('uploadPhoto/{id}', 'API\UserController@uploadPhoto');
-      
-$response = $this->withHeaders([
-            'X-Header' => 'Value',
-        ])->json('POST', '/userer', ['name' => 'Sally']);
-    */
+    public function testLogout()
+    {
+        $response = $this->json('post', 'http://127.0.0.1:8000/api/login', ['email' => 'ebasem653@gmail.com', 'password' => '123456']);
+        $token = $response->original['success']['token'];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token
+          ])->json('get', 'http://127.0.0.1:8000/api/logoutAPI');
+        $this->assertEquals(200, $response->status());
+    }
+
+    public function testEditUserLessData()
+    {
+        // name, email, password, c_password, mobileNumber Required
+        $response = $this->json('post', 'http://127.0.0.1:8000/api/login', ['email' => 'ebasem653@gmail.com', 'password' => '123456']);
+        $token = $response->original['success']['token'];
+        $id = $response->original['success']['id'];
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token
+          ])->json('post', 'http://127.0.0.1:8000/api/edit/'.$id, [
+              'name' => 'testAPI',
+              'typeOfUsers' => 1,
+        ]);
+        $this->assertEquals(400, $response->status());
+    }
+
+
+    public function testEditUser()
+    {
+        // name, email, password, c_password, mobileNumber Required
+        $response = $this->json('post', 'http://127.0.0.1:8000/api/login', ['email' => 'ebasem653@gmail.com', 'password' => '123456']);
+        $token = $response->original['success']['token'];
+        $id = $response->original['success']['id'];
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer '.$token
+          ])->json('post', 'http://127.0.0.1:8000/api/edit/'.$id, [
+              'name' => 'testAPI',
+              'typeOfUsers' => 1,
+              'email' => 'ebasem653@gmail.com',
+              'password' => '123456',
+              'c_password' => '123456',
+              'mobileNumber' => '123123123123'
+        ]);
+        $this->assertEquals(200, $response->status());
+    }
+
+
+
 
 }

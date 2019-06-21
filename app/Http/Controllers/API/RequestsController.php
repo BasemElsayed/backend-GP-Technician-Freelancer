@@ -234,11 +234,14 @@ class RequestsController extends Controller
         if($request->get('status') == 2)
         {
             $freelancer = DB::table('freelancers')->where('id', $reqst->freelancer_id)->get();
+            $client = DB::table('clients')->where('id', $reqst->client_id)->get();
             $numberofjob = $freelancer[0]->numberOfJobsDone;
             $numberofjob = $numberofjob + 1;
             DB::table('freelancers')->where('id', $freelancer[0]->id)->update(['allowedToRequest' => 0]);
             DB::table('freelancers')->where('id', $freelancer[0]->id)->update(['numberOfJobsDone' => $numberofjob]);
 
+
+            DB::table('clients')->where('id', $client[0]->id)->update(['allowedToRequest' => 0]);
             $client = DB::table('clients')->where('id', $reqst->client_id)->get();
             $numberofjobd = $client[0]->numberOfJobsDone;
             $numberofjobd = $numberofjobd + 1;
@@ -306,6 +309,24 @@ class RequestsController extends Controller
                 ['freelancerRate', '=', '0'],
             ])
             ->select('requsts.status', 'clients.email', 'clients.name', 'clients.mobileNumber', 'requsts.id', 'requsts.freelancer_id', 'requsts.client_id', 'clients.xCordinate','clients.yCordinate', 'clients.address', 'requsts.freelancerRate', 'clients.totalRate')
+            ->get();
+            
+        $success['requsts'] =  $requsts;
+        return response()->json($success, $this-> successStatus);
+    }
+
+
+    public function showFinishedRequestsNeedsRateClientVersion($id)
+    {        
+        $requsts = DB::table('requsts')
+            ->join('freelancers', 'freelancers.id', '=', 'requsts.freelancer_id')
+            ->join('services', 'services.name', '=', 'freelancers.jobTitle')
+            ->where([
+                ['client_id', '=', $id],
+                ['status', '=', '2'],
+                ['rate', '=', '0'],
+            ])
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
             ->get();
             
         $success['requsts'] =  $requsts;
