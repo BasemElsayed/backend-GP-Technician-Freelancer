@@ -8,6 +8,7 @@ use App\Freelancer;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 use Illuminate\Support\Facades\DB;
+use Image;
 
 class UserController extends Controller 
 {

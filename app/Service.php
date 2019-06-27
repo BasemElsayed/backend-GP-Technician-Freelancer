@@ -8,6 +8,6 @@ class Service extends Model
 {
     //
     protected $fillable = [
-        'name', 'description', 'serviceIcon',
+        'name', 'description', 'serviceIcon', 'nameArabic', 'descriptionArabic',
     ];
 }

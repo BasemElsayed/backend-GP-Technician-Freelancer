@@ -17,6 +17,8 @@ class CreateServicesTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->longText('description');
+            $table->string('nameArabic')->unique();
+            $table->longText('descriptionArabic');
             $table->string('serviceIcon');
             $table->timestamps();
         });

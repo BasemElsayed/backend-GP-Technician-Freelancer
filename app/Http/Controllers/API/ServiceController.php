@@ -14,13 +14,14 @@ class ServiceController extends Controller
 {
     public $successStatus = 200;
 
-   
     public function addService(Request $request)
     {
         $validator = Validator::make($request->all(), [ 
             'name' => 'required', 
             'description' => 'required', 
-            'serviceIcon' => 'required'
+            'serviceIcon' => 'required',
+            'nameArabic' => 'required',
+            'descriptionArabic' => 'required'
         ]);
         if ($validator->fails()) 
         { 
@@ -31,7 +32,7 @@ class ServiceController extends Controller
         if($request->hasFile('serviceIcon'))
         {
             $image = $request->file('serviceIcon');
-            $name = str_slug($request->id) . '.' . $image->getClientOriginalExtension();
+            $name = str_slug($request->name) . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/serviceIcons');
             $imagePath = $destinationPath . '/' . $name;
             $image = Image::make($image->getRealPath());
@@ -46,6 +47,8 @@ class ServiceController extends Controller
         }
         $service->name = $request->get('name');
         $service->description = $request->get('description');
+        $service->nameArabic = $request->get('nameArabic');
+        $service->descriptionArabic = $request->get('descriptionArabic');
         $service->save();
         
         $success['service'] =  $service; 
@@ -57,7 +60,9 @@ class ServiceController extends Controller
         $service = Service::findOrFail($id);
         $validator = Validator::make($request->all(), [ 
             'name' => 'required', 
-            'description' => 'required', 
+            'description' => 'required',
+            'nameArabic' => 'required',
+            'descriptionArabic' => 'required'
         ]);
         if ($validator->fails()) 
         { 
@@ -74,7 +79,7 @@ class ServiceController extends Controller
         if($request->hasFile('serviceIcon'))
         {
             $image = $request->file('serviceIcon');
-            $name = str_slug($service->id) . '.' . $image->getClientOriginalExtension();
+            $name = str_slug($service->name) . '.' . $image->getClientOriginalExtension();
             $destinationPath = public_path('/serviceIcons');
             $imagePath = $destinationPath . '/' . $name;
             $image = Image::make($image->getRealPath());

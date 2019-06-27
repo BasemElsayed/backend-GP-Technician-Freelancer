@@ -73,7 +73,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '2'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address', 'services.nameArabic')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -90,7 +90,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '1'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address', 'services.nameArabic')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -108,7 +108,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '0'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address', 'services.nameArabic')
             ->get();
 
         $success['requsts'] =  $requsts;
@@ -124,7 +124,7 @@ class RequestsController extends Controller
                 ['client_id', '=', $id],
                 ['status', '=', '3'],
             ])
-            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address')
+            ->select('requsts.status', 'freelancers.email', 'freelancers.name', 'freelancers.mobileNumber', 'requsts.id', 'freelancers.jobTitle', 'services.serviceIcon', 'requsts.rate', 'requsts.freelancerRate', 'requsts.freelancer_id', 'requsts.client_id', 'freelancers.totalRate', 'freelancers.address', 'services.nameArabic')
             ->get();
 
         $success['requsts'] =  $requsts;
